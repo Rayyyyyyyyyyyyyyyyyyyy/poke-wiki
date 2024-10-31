@@ -6,40 +6,43 @@ const toFixedWidth = (index: number) => {
   return `#${index.toString().padStart(4, "0")}`;
 };
 const res = await getPokeApi("list", {});
-console.log("res", res);
-const pokeList = JSON.parse(JSON.stringify(res.data)) as TPokeList[];
-pokeList.forEach((item) => {
+const resData = JSON.parse(JSON.stringify(res.data)) as TPokeList[];
+resData.forEach((item) => {
   item.strIndex = toFixedWidth(item.index);
 });
-
-// 總圖片的寬度和高度
-const totalWidth = 4480;
-const totalHeight = 4480;
-
-// 小點圖的行列數
-const gridRows = 40;
-const gridCols = 40;
-
-// 計算每個小點圖的寬度和高度
-const cellWidth = totalWidth / gridCols;
-const cellHeight = totalHeight / gridRows;
-
-// 計算每個小點圖的寬高佔整體的比例
-const widthRatio = cellWidth / totalWidth;
-const heightRatio = cellHeight / totalHeight;
 </script>
 
 <template>
   <div class="container">
-    <UCard v-for="item in pokeList">
+    <UCard v-for="item in resData" class="poke-card">
       <template #header>
         <p>{{ item.strIndex }}</p>
 
         <p>{{ item.nameZh }}</p>
       </template>
       <div class="poke-row">
-        <div class="poke-base poke-img" :class="`poke-${item.index}`"></div>
-        <div class="poke-color poke-img" :class="`poke-${item.index}`"></div>
+        <img
+          :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${item.index}.png`"
+          alt=""
+          class="poke-img"
+        />
+        <img
+          :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${item.index}.png`"
+          alt=""
+          class="poke-img"
+        />
+        <UDivider orientation="vertical" />
+
+        <img
+          :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${item.index}.png`"
+          alt=""
+          class="poke-img"
+        />
+        <img
+          :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/shiny/${item.index}.png`"
+          alt=""
+          class="poke-img"
+        />
       </div>
 
       <template #footer>
@@ -54,13 +57,19 @@ const heightRatio = cellHeight / totalHeight;
 
 <style lang="scss" scoped>
 .container {
+  @apply mx-auto;
   @apply grid grid-cols-4 auto-rows-auto gap-4;
+
+  .poke-card {
+    @apply cursor-pointer;
+  }
 
   .poke-row {
     @apply flex;
 
     .poke-img {
-      @apply w-16 h-16;
+      max-width: 25%;
+      max-height: 80px;
     }
   }
 }
